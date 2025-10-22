@@ -105,6 +105,7 @@ public class MapMarker extends MapFeature {
     private final DraweeHolder<?> logoHolder;
     private ImageManager.OnImageLoadedListener imageLoadedListener;
     private DataSource<CloseableReference<CloseableImage>> dataSource;
+    private MarkerManager.Collection markerCollection;
     private final ControllerListener<ImageInfo> mLogoControllerListener =
             new BaseControllerListener<ImageInfo>() {
                 @Override
@@ -484,6 +485,7 @@ public class MapMarker extends MapFeature {
     public void addToMap(Object collection) {
         MarkerManager.Collection markerCollection = (MarkerManager.Collection) collection;
         marker = markerCollection.addMarker(getMarkerOptions());
+        this.markerCollection = markerCollection;
         updateTracksViewChanges();
     }
 
@@ -496,6 +498,10 @@ public class MapMarker extends MapFeature {
         markerCollection.remove(marker);
         marker = null;
         updateTracksViewChanges();
+    }
+
+    public void doDestroy() {
+        this.removeFromMap(this.markerCollection);
     }
 
     private BitmapDescriptor getIcon() {
