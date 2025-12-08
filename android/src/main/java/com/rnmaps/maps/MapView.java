@@ -256,6 +256,8 @@ public class MapView extends com.google.android.gms.maps.MapView implements Goog
         this.context = context;
         super.getMapAsync(this);
 
+        attachLifecycleObserver();
+
         final MapView view = this;
 
         fusedLocationSource = new FusedLocationSource(context);
@@ -313,40 +315,40 @@ public class MapView extends com.google.android.gms.maps.MapView implements Goog
 
     }
 
-    @Override
-    protected void onAttachedToWindow() {
-        super.onAttachedToWindow();
-        attachLifecycleObserver();
-        if (savedMapState != null) {
-            super.onCreate(savedMapState);
-            super.onStart();
-            super.onResume();
-            prepareAttacherView();
-            getMapAsync((map)->{
-                onMapReady(map);
-                savedFeatures.forEach((index, feature) -> {
-                    addFeature(feature, index);
-                });
-            });
-        }
-    }
+    // @Override
+    // protected void onAttachedToWindow() {
+    //     super.onAttachedToWindow();
+    //     attachLifecycleObserver();
+    //     if (savedMapState != null) {
+    //         super.onCreate(savedMapState);
+    //         super.onStart();
+    //         super.onResume();
+    //         prepareAttacherView();
+    //         getMapAsync((map)->{
+    //             onMapReady(map);
+    //             savedFeatures.forEach((index, feature) -> {
+    //                 addFeature(feature, index);
+    //             });
+    //         });
+    //     }
+    // }
 
-    // Override onDetachedFromWindow to detach lifecycle observer
-    @Override
-    protected void onDetachedFromWindow() {
-        if (savedMapState == null) {
-            savedMapState = new Bundle();
-        }
-        super.onSaveInstanceState(savedMapState);
-        super.onPause();
-        super.onStop();
-        savedFeatures = new HashMap<>(features);
-        savedFeatures.keySet().forEach(this::removeFeatureAt);
-        removeView(attacherGroup);
-        attacherGroup = null;
-        detachLifecycleObserver();
-        super.onDetachedFromWindow();
-    }
+    // // Override onDetachedFromWindow to detach lifecycle observer
+    // @Override
+    // protected void onDetachedFromWindow() {
+    //     if (savedMapState == null) {
+    //         savedMapState = new Bundle();
+    //     }
+    //     super.onSaveInstanceState(savedMapState);
+    //     super.onPause();
+    //     super.onStop();
+    //     savedFeatures = new HashMap<>(features);
+    //     savedFeatures.keySet().forEach(this::removeFeatureAt);
+    //     removeView(attacherGroup);
+    //     attacherGroup = null;
+    //     detachLifecycleObserver();
+    //     super.onDetachedFromWindow();
+    // }
 
     // Method to attach lifecycle observer
     private void attachLifecycleObserver() {
